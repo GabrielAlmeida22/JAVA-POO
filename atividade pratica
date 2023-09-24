@@ -1,0 +1,294 @@
+//CLASSE principal//////////////////////////////////////////////////////////////////
+
+package com.mybank;
+
+public class Main {
+    public static void main(String[] args) {
+    
+    }
+}
+
+
+//CLASSE 'ContaBancaria'.////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+package com.mybank;
+
+public abstract class ContaBancaria {
+    private String numeroConta;
+    private double saldo;
+
+    public ContaBancaria(String numeroConta) {
+        this.numeroConta = numeroConta;
+        this.saldo = 0.0;
+    }
+
+    public String getNumeroConta() {
+        return numeroConta;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public void depositar(double valor) {
+        if (valor > 0) {
+            saldo += valor;
+        }
+    }
+
+    public abstract void pagar(double valor);
+
+    public abstract void extratoPorPeriodo(String inicio, String fim);
+
+    public abstract void financiamento(double valor);
+
+    public abstract void aplicacao(double valor);
+}
+
+
+
+
+
+
+
+//CLASSE de Contas Específicas 'ContaSalario, ContaPoupanca, ContaCorrente'///////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+package com.mybank;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ContaPoupanca extends ContaBancaria {
+    private List<String> extrato;
+
+    public ContaPoupanca(String numeroConta) {
+        super(numeroConta);
+        extrato = new ArrayList<>();
+        if (getSaldo() < 50.0) {
+            depositar(50.0);
+        }
+    }
+
+    @Override
+    public void pagar(double valor) {
+        if (getSaldo() >= valor) {
+            extrato.add("Pagamento de R$" + valor);
+            this.depositar(-valor); // O pagamento é uma retirada de saldo
+        } else {
+            extrato.add("Tentativa de pagamento de R$" + valor + " - Saldo insuficiente.");
+        }
+    }
+
+    @Override
+    public void extratoPorPeriodo(String inicio, String fim) {
+        System.out.println("Extrato da Conta Poupança para o período de " + inicio + " a " + fim + ":");
+        for (String registro : extrato) {
+            System.out.println(registro);
+        }
+    }
+
+    @Override
+    public void financiamento(double valor) {
+        extrato.add("Tentativa de financiamento de R$" + valor + " - Não permitido em Conta Poupança.");
+    }
+
+    @Override
+    public void aplicacao(double valor) {
+        extrato.add("Aplicação de R$" + valor + " na Conta Poupança.");
+        this.depositar(valor);
+    }
+}
+
+public class ContaSalario extends ContaBancaria {
+    private List<String> extrato;
+
+    public ContaSalario(String numeroConta) {
+        super(numeroConta);
+        extrato = new ArrayList<>();
+    }
+
+    @Override
+    public void pagar(double valor) {
+        if (getSaldo() >= valor) {
+            extrato.add("Pagamento de R$" + valor);
+            this.depositar(-valor); // O pagamento é uma retirada de saldo
+        } else {
+            extrato.add("Tentativa de pagamento de R$" + valor + " - Saldo insuficiente.");
+        }
+    }
+
+    @Override
+    public void extratoPorPeriodo(String inicio, String fim) {
+        System.out.println("Extrato da Conta Salário para o período de " + inicio + " a " + fim + ":");
+        for (String registro : extrato) {
+            System.out.println(registro);
+        }
+    }
+
+    @Override
+    public void financiamento(double valor) {
+        extrato.add("Tentativa de financiamento de R$" + valor + " - Não permitido em Conta Salário.");
+    }
+
+    @Override
+    public void aplicacao(double valor) {
+        extrato.add("Tentativa de aplicação de R$" + valor + " - Não permitido em Conta Salário.");
+    }
+}
+
+public class ContaCorrente extends ContaBancaria {
+    private List<String> extrato;
+
+    public ContaCorrente(String numeroConta) {
+        super(numeroConta);
+        extrato = new ArrayList<>();
+    }
+
+    @Override
+    public void pagar(double valor) {
+        if (getSaldo() >= valor) {
+            extrato.add("Pagamento de R$" + valor);
+            this.depositar(-valor); // O pagamento é uma retirada de saldo
+        } else {
+            extrato.add("Tentativa de pagamento de R$" + valor + " - Saldo insuficiente.");
+        }
+    }
+
+    @Override
+    public void extratoPorPeriodo(String inicio, String fim) {
+        System.out.println("Extrato da Conta Corrente para o período de " + inicio + " a " + fim + ":");
+        for (String registro : extrato) {
+            System.out.println(registro);
+        }
+    }
+
+    @Override
+    public void financiamento(double valor) {
+        extrato.add("Tentativa de financiamento de R$" + valor + " - Não permitido em Conta Corrente.");
+    }
+
+    @Override
+    public void aplicacao(double valor) {
+        extrato.add("Tentativa de aplicação de R$" + valor + " - Não permitido em Conta Corrente.");
+    }
+}
+
+
+
+
+
+
+//CLASSE 'ContaConjunta'//////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+package com.mybank;
+
+public class ContaConjunta extends ContaBancaria {
+    private ContaBancaria titular1;
+    private ContaBancaria titular2;
+
+    public ContaConjunta(String numeroConta, ContaBancaria titular1, ContaBancaria titular2) {
+        super(numeroConta);
+        this.titular1 = titular1;
+        this.titular2 = titular2;
+    }
+
+    @Override
+    public void pagar(double valor) {
+        // Implemente a lógica de pagamento para conta conjunta
+    }
+
+    @Override
+    public void extratoPorPeriodo(String inicio, String fim) {
+        // Implemente a lógica do extrato para conta conjunta
+    }
+
+    @Override
+    public void financiamento(double valor) {
+        // Implemente a lógica de financiamento para conta conjunta
+    }
+
+    @Override
+    public void aplicacao(double valor) {
+        // Implemente a lógica de aplicação para conta conjunta
+    }
+}
+
+
+
+
+
+
+
+
+
+
+//Testes Unitarios//////////////////////////////////////////////////////////
+
+
+
+
+
+
+package com.mybank;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ContaPoupancaTest {
+    private ContaPoupanca conta;
+
+    @BeforeEach
+    void setUp() {
+        conta = new ContaPoupanca("12345");
+    }
+
+    @Test
+    void testDepositar() {
+        conta.depositar(100.0);
+        assertEquals(150.0, conta.getSaldo(), 0.01); // Usamos delta para lidar com imprecisões de ponto flutuante
+    }
+
+    @Test
+    void testPagar() {
+        conta.depositar(100.0);
+
+        // Teste de pagamento com saldo suficiente
+        conta.pagar(50.0);
+        assertEquals(50.0, conta.getSaldo(), 0.01);
+
+        // Teste de pagamento com saldo insuficiente
+        conta.pagar(200.0);
+        assertEquals(50.0, conta.getSaldo(), 0.01);
+    }
+
+    @Test
+    void testExtratoPorPeriodo() {
+        
+    }
+
+    @Test
+    void testFinanciamento() {
+       
+    }
+
+    @Test
+    void testAplicacao() {
+        conta.aplicacao(200.0);
+        assertEquals(250.0, conta.getSaldo(), 0.01);
+    }
+}
